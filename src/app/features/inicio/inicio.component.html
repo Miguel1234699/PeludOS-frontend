@@ -1,0 +1,68 @@
+<div class="topbar">
+  <h1>Hola, {{ auth.usuario()?.nombre_completo }} 👋</h1>
+  <div class="acciones">
+    <a class="btn btn-primary" routerLink="/mascotas">+ Agregar mascota</a>
+    <a class="btn" routerLink="/citas">Agendar cita</a>
+  </div>
+</div>
+
+@if (loading()) {
+  <p class="muted">Cargando resumen...</p>
+}
+
+@if (error()) {
+  <div class="msg-error">{{ error() }}</div>
+}
+
+@if (!loading() && !error()) {
+  <div class="stats">
+    <a class="stat" routerLink="/mascotas"><b>{{ mascotas().length }}</b><span>Mascotas</span></a>
+    <a class="stat" routerLink="/citas"><b>{{ proximasCitas().length }}</b><span>Citas próximas</span></a>
+    <a class="stat" routerLink="/vacunas"><b>{{ vacunas().length }}</b><span>Vacunas registradas</span></a>
+    <a class="stat" routerLink="/recordatorios"><b>{{ pendientes().length }}</b><span>Recordatorios pendientes</span></a>
+  </div>
+
+  <div class="cols">
+    <div class="card">
+      <h3>📅 Próximas citas</h3>
+      <ul class="lista">
+        @for (c of proximasCitas().slice(0, 5); track c.id_cita) {
+          <li>
+            <b>{{ c.fecha_hora | date: 'dd/MM/yyyy, h:mm a' }}</b> · {{ nombreMascota(c.id_mascota) }}
+            <div class="muted">{{ c.motivo }}</div>
+          </li>
+        } @empty {
+          <li class="muted">No tienes citas próximas.</li>
+        }
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>💉 Próximas vacunas</h3>
+      <ul class="lista">
+        @for (v of proximasVacunas().slice(0, 5); track v.id_vacuna) {
+          <li>
+            <b>{{ v.fecha_proxima | date: 'dd/MM/yyyy' }}</b> · {{ nombreMascota(v.id_mascota) }}
+            <div class="muted">{{ v.nombre_vacuna }}</div>
+          </li>
+        } @empty {
+          <li class="muted">No hay vacunas programadas.</li>
+        }
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>⏰ Recordatorios pendientes</h3>
+      <ul class="lista">
+        @for (r of pendientes().slice(0, 5); track r.id_recordatorio) {
+          <li>
+            <b>{{ r.titulo }}</b>
+            <div class="muted">{{ r.fecha_recordatorio | date: 'dd/MM/yyyy, h:mm a' }}</div>
+          </li>
+        } @empty {
+          <li class="muted">Estás al día. 🎉</li>
+        }
+      </ul>
+    </div>
+  </div>
+}
