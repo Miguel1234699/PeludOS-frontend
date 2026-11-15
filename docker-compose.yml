@@ -1,0 +1,13 @@
+services:
+  web:
+    build: .
+    container_name: peludos_web
+    restart: always
+    ports:
+      - "80:80"
+    networks:
+      - peludos_default
+
+networks:
+  peludos_default:
+    external: true
